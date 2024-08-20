@@ -1,75 +1,79 @@
 <div align="center">
 
-<h1>Template | Worker</h1>
+# Aphrodite Engine | RunPod Worker
 
-[![CI | Test Handler](https://github.com/runpod-workers/worker-template/actions/workflows/CI-test_handler.yml/badge.svg)](https://github.com/runpod-workers/worker-template/actions/workflows/CI-test_handler.yml)
-&nbsp;
-[![CD | Build-Test-Release](https://github.com/runpod-workers/worker-template/actions/workflows/build-test-release.yml/badge.svg)](https://github.com/runpod-workers/worker-template/actions/workflows/build-test-release.yml)
+🚀 | A RunPod worker for the Aphrodite Engine, enabling efficient text generation and processing.
 
-🚀 | A simple worker that can be used as a starting point to build your own custom RunPod Endpoint API worker.
 </div>
 
 ## 📖 | Getting Started
 
-1. Clone this repository.
-2. (Optional) Add DockerHub credentials to GitHub Secrets.
-3. Add your code to the `src` directory.
-4. Update the `handler.py` file to load models and process requests.
-5. Add any dependencies to the `requirements.txt` file.
-6. Add any other build time scripts to the`builder` directory, for example, downloading models.
-7. Update the `Dockerfile` to include any additional dependencies.
+This worker runs the Aphrodite Engine on RunPod Serverless, allowing for efficient text generation and processing. To set up the worker on RunPod, follow these steps:
 
-### ⚙️ | CI/CD (GitHub Actions)
+1. Go to the RunPod dashboard and create a new serverless template.
+2. Input your container image or use the pre-built image from DockerHub.
+3. Select your desired GPU and other hardware specifications.
+4. Set the environment variables as needed (see below).
+5. Deploy a serverless endpoint using the template.
 
-As a reference this repository provides example CI/CD workflows to help you test your worker and build a docker image. The three main workflows are:
+## 🔧 | Environment Variables
 
-1. `CI-test_handler.yml` - Tests the handler using the input provided by the `--test_input` argument when calling the file containing your handler.
+The following environment variables can be set to configure the Aphrodite Engine:
 
-### Test Handler
+- `DOWNLOAD_DIR`: Directory to download the model (recommended: "/runpod-volume", see below)
+- `MODEL` or `MODEL_NAME` (required): Name or path of the Hugging Face model to use
+- `REVISION`: Specific model version to use (branch, tag, or commit ID)
+- `DATATYPE`: Data type to use (auto, float16, bfloat16, float32)
+- `KVCACHE`: KV cache data type
+- `MAX_MODEL_LEN` or `CONTEXT_LENGTH`: Model context size
+- `NUM_GPUS`: Number of GPUs for tensor parallelism
+- `GPU_MEMORY_UTILIZATION`: GPU memory utilization factor
+- `QUANTIZATION`: Quantization method
+- `ENFORCE_EAGER`: If set, disables CUDA graphs
+- `KOBOLD_API`: If set, launches the Kobold API
+- `CMD_ADDITIONAL_ARGUMENTS`: Any additional command-line arguments
 
-This workflow will validate that your handler works as expected. You may need to add some dependency installations to the `CI-test_handler.yml` file to ensure your handler can be tested.
+## 💾 | Using a Network Volume
 
-The action expects the following arguments to be available:
+It's recommended to use a network volume for model storage. To do this:
 
-- `vars.RUNNER_24GB` | The endpoint ID on RunPod for a 24GB runner.
-- `secrets.RUNPOD_API_KEY` | Your RunPod API key.
-- `secrets.GH_PAT` | Your GitHub Personal Access Token.
-- `vars.GH_ORG` | The GitHub organization that owns the repository, this is where the runner will be added to.
+1. Create a network volume in your RunPod account.
+2. When deploying the pod, attach the network volume.
+3. Set the `DOWNLOAD_DIR` environment variable to "/runpod-volume".
 
-### Test End-to-End
+This ensures that your models are persistently stored and can be reused across deployments.
 
-This repository is setup to automatically build and push a docker image to the GitHub Container Registry. You will need to add the following to the GitHub Secrets for this repository to enable this functionality:
+## Example Inputs
 
-- `DOCKERHUB_USERNAME` | Your DockerHub username for logging in.
-- `DOCKERHUB_TOKEN` | Your DockerHub token for logging in.
-
-Additionally, the following need to be added as GitHub actions variables:
-
-- `DOCKERHUB_REPO` | The name of the repository you want to push to.
-- `DOCKERHUB_IMG` | The name of the image you want to push to.
-
-The `CD-docker_dev.yml` file will build the image and push it to the `dev` tag, while the `CD-docker_release.yml` file will build the image on releases and tag it with the release version.
-
-The `CI-test_worker.yml` file will test the worker using the input provided by the `--test_input` argument when calling the file containing your handler. Be sure to update this workflow to install any dependencies you need to run your tests.
-
-## Example Input
+### Regular Completions
 
 ```json
 {
-    "input": {
-        "name": "John Doe"
+  "input": {
+    "prompt": "Once upon a time",
+    "sampling_params": {
+      "max_tokens": 400,
+      "temperature": 0.7
     }
+  }
 }
 ```
 
-## 💡 | Best Practices
+### Chat Completions
 
-System dependency installation, model caching, and other shell tasks should be added to the `builder/setup.sh` this will allow you to easily setup your Dockerfile as well as run CI/CD tasks.
-
-Models should be part of your docker image, this can be accomplished by either copying them into the image or downloading them during the build process.
-
-If using the input validation utility from the runpod python package, create a `schemas` python file where you can define the schemas, then import that file into your `handler.py` file.
+```json
+{
+  "input": {
+    "messages": [{ "role": "user", "content": "Hello" }],
+    "sampling_params": {
+      "max_tokens": 100,
+      "temperature": 0.7
+    }
+  }
+}
+```
 
 ## 🔗 | Links
 
-🐳 [Docker Container](https://hub.docker.com/r/runpod/serverless-hello-world)
+📚 [Aphrodite Engine](https://github.com/PygmalionAI/aphrodite-engine)
+🚀 [RunPod (affiliate link)](https://runpod.io?ref=7ejcv617)

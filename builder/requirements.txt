@@ -5,4 +5,5 @@
 # git+https://github.com/runpod/runpod-python.git
 # To learn more, see https://pip.pypa.io/en/stable/reference/requirements-file-format/
 
+requests-toolbelt==1.0.0
 runpod==1.6.2
