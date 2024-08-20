@@ -8,10 +8,10 @@
 
 ## 📖 | Getting Started
 
-This worker runs the Aphrodite Engine on RunPod Serverless, allowing for efficient text generation and processing. To set up the worker on RunPod, follow these steps:
+This worker runs the [Aphrodite Engine](https://github.com/PygmalionAI/aphrodite-engine) on [RunPod Serverless](https://www.runpod.io/serverless-gpu?ref=7ejcv617), allowing for efficient text generation and processing. To set up the worker on RunPod, follow these steps:
 
-1. Go to the RunPod dashboard and create a new serverless template.
-2. Input your container image or use the pre-built image from DockerHub.
+1. Go to the RunPod dashboard and create a new [serverless template](https://www.runpod.io/console/user/templates?ref=7ejcv617).
+2. Input your container image or use the `joachimchauvet/worker-aphrodite-engine:latest` [pre-built image from DockerHub](https://hub.docker.com/r/joachimchauvet/worker-aphrodite-engine).
 3. Select your desired GPU and other hardware specifications.
 4. Set the environment variables as needed (see below).
 5. Deploy a serverless endpoint using the template.
